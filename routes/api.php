@@ -18,7 +18,6 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-
 Route::get('/anime/new', \App\Http\Controllers\NewAnimeController::class);
 
 Route::get('/anime/{name}/episodes', \App\Http\Controllers\AnimeEpisodesController::class);

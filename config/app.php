@@ -30,6 +30,11 @@ return [
 
     'env' => env('APP_ENV', 'production'),
 
+    'anilibria_api_url' => env('ANILIBRIA_API_URL'),
+    'anilibria_url' => env('ANILIBRIA_URL'),
+
+
+
     /*
     |--------------------------------------------------------------------------
     | Application Debug Mode

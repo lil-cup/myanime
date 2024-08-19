@@ -9,8 +9,8 @@ class AnimeEpisodesController extends Controller
 {
     public function __invoke(Request $request, $name)
     {
-        $response = Http::get('https://anilibria.top/api/v1/anime/releases/' . $name);
-
+        $url = config('app.anilibria_api_url') . '/anime/releases/' . $name;
+        $response = Http::get($url)->json();
         return $response;
     }
 }

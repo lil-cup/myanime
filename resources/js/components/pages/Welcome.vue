@@ -11,7 +11,7 @@
                 <div class="swiper-container">
                     <div class="swiper-wrapper">
                         <div class="swiper-slide" v-for="anime in allAnime">
-                            <router-link :to="{ name: 'anime.episodes', params: { name: anime.alias } }">
+                            <router-link :to="anime.alias ? { name: 'anime.episodes', params: { name: anime.alias } } : { name: 'welcome.show' }">
                                 <div class="rating" v-if="anime.age_rating">{{ anime.age_rating.label }}</div>
                                 <div class="episode" v-if="!anime.loader">{{ anime.latest_episode.ordinal }} серия</div>
                                 <div class="content" v-if="!anime.loader">
@@ -25,7 +25,7 @@
                                         <div class="content__data-button"><img src="/images/icons/play.svg"> смотреть</div>
                                     </div>
                                 </div>
-                                <img class="poster" :src="anime.poster.src" v-if="!anime.loader && anime.poster.src">
+                                <img class="poster" :src="ani_url + anime.poster.src" v-if="!anime.loader && anime.poster.src">
                                 <div class="loader" v-if="anime.loader"></div>
                             </router-link>
                         </div>
@@ -33,7 +33,8 @@
                 </div>
             </div>
         </div>
-        <img src="https://i.playground.ru/p/cqwTrXJ66pedXRxb7Klwdg.png" class="main__bg">
+        <img src="/images/top.gif" class="main__bg">
+        <!--        <img src="https://i.playground.ru/p/cqwTrXJ66pedXRxb7Klwdg.png" class="main__bg">-->
     </div>
 </template>
 <script>
@@ -48,6 +49,7 @@ export default {
 
     data() {
         return {
+            ani_url: ani_url,
             allAnime: [
                 {loader: true},
                 {loader: true},
@@ -68,15 +70,14 @@ export default {
 
     methods: {
         getNewAnimeSeries() {
-            let main = this;
             axios.get('/api/anime/new')
-                .then(function (response) {
-                    main.allAnime = response.data.map(function(anime) {
+                .then(response => {
+                    this.allAnime = response.data.map(function(anime) {
                         anime.loader = false;
                         return anime;
                     });
                 })
-                .catch(function (error) {
+                .catch(error => {
                     console.log(error)
                 })
         }
