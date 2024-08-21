@@ -22,7 +22,12 @@
                                             <span>{{ anime.season.description }}</span>
                                             <span>{{ anime.type.description }}</span>
                                         </div>
-                                        <div class="content__data-button"><img src="/images/icons/play.svg"> смотреть</div>
+                                        <router-link
+                                            class="content__data-button"
+                                            :to="{ name: 'anime.episode', params: { id: anime.latest_episode.id } }"
+                                        >
+                                            <img src="/images/icons/play.svg"> смотреть
+                                        </router-link>
                                     </div>
                                 </div>
                                 <img class="poster" :src="ani_url + anime.poster.src" v-if="!anime.loader && anime.poster.src">
@@ -78,7 +83,7 @@ export default {
                     });
                 })
                 .catch(error => {
-                    console.log(error)
+                    // console.log(error)
                 })
         }
     }

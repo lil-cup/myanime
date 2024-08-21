@@ -17,5 +17,11 @@ export default new VueRouter({
             component: () => import('./components/pages/Episodes.vue'),
             name: 'anime.episodes',
         },
+
+        {
+            path: '/anime/episode/:id',
+            component: () => import('./components/pages/Episode.vue'),
+            name: 'anime.episode',
+        },
     ],
 });
