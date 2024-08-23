@@ -10,7 +10,7 @@ services:
       - "8080:80"
     depends_on:
       - app
-    container_name: convert_nginx
+    container_name: anime_nginx
 
   app:
     build:
@@ -20,7 +20,7 @@ services:
       - ./:/var/www
     depends_on:
       - db
-    container_name: convert_app
+    container_name: anime_app
 
   db:
     image: mysql:8.0
@@ -32,4 +32,4 @@ services:
       MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
     ports:
       - "3307:3306"
-    container_name: convert_db
+    container_name: anime_db
