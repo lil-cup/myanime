@@ -25,4 +25,4 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             cd ${{ env.DEPLOY_DIR }}
-            sudo ./update.sh
+#            sudo ./update.sh

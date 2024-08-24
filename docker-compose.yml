@@ -6,7 +6,6 @@ services:
     volumes:
       - ./docker/nginx/conf.d/:/etc/nginx/conf.d/
       - ./:/var/www/
-      - ./docker/nginx/certs/:/etc/nginx/certs/
     ports:
       - 80:80
     depends_on:
