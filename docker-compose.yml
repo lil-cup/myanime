@@ -5,6 +5,7 @@ services:
     image: nginx:latest
     volumes:
       - ./docker/nginx/conf.d/:/etc/nginx/conf.d/
+      - ./docker/certs:/etc/nginx/ssl
       - ./:/var/www/
     ports:
       - 80:80
