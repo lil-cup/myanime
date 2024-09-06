@@ -6,7 +6,7 @@ services:
     volumes:
       - ./nginx/conf.d/:/etc/nginx/conf.d/
       - ./certs:/etc/nginx/ssl
-      - ./:/var/www/
+      - ../:/var/www/
     ports:
       - 80:80
       - 443:443
