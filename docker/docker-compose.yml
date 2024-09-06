@@ -4,8 +4,8 @@ services:
   nginx:
     image: nginx:latest
     volumes:
-      - ./nginx/conf.d/:/etc/nginx/conf.d/
-      - ./certs:/etc/nginx/ssl
+      - ../docker/nginx/conf.d/:/etc/nginx/conf.d/
+      - ../docker/certs:/etc/nginx/ssl
       - ../:/var/www/
     ports:
       - 80:80
@@ -29,8 +29,9 @@ services:
     restart: always
     volumes:
       - ../tmp/db:/var/lib/mysql
-    env_file:
-      - ../.env
+    environment:
+      MYSQL_DATABASE: ${DB_DATABASE}
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
     ports:
       - "3307:3306"
     container_name: anime_db
