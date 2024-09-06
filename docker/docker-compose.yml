@@ -4,10 +4,12 @@ services:
   nginx:
     image: nginx:latest
     volumes:
-      - ./docker/nginx/conf.d/:/etc/nginx/conf.d/
+      - ./nginx/conf.d/:/etc/nginx/conf.d/
+      - ./certs:/etc/nginx/ssl
       - ./:/var/www/
     ports:
       - 80:80
+      - 443:443
     depends_on:
       - app
     container_name: anime_nginx
@@ -15,9 +17,9 @@ services:
   app:
     build:
       context: .
-      dockerfile: docker/app/Dockerfile-local
+      dockerfile: docker/app/Dockerfile
     volumes:
-      - ./:/var/www/
+      - ../:/var/www/
     depends_on:
       - db
     container_name: anime_app
@@ -26,10 +28,9 @@ services:
     image: mysql:8.0
     restart: always
     volumes:
-      - ./tmp/db:/var/lib/mysql
-    environment:
-      MYSQL_DATABASE: ${DB_DATABASE}
-      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      - ../tmp/db:/var/lib/mysql
+    env_file:
+      - ../.env
     ports:
       - "3307:3306"
     container_name: anime_db
