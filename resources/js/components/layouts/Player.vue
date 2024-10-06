@@ -82,52 +82,40 @@ export default {
             const player = this.$refs.player;
             const video = this.$refs.video;
 
-            if (this.isIOS()) {
-                if (document.fullscreenElement) {
-                    if (document.exitFullscreen) {
-                        document.exitFullscreen();
-                    } else if (document.webkitExitFullscreen) {
-                        document.webkitExitFullscreen();
-                    } else if (document.mozCancelFullScreen) {
-                        document.mozCancelFullScreen();
-                    } else if (document.msExitFullscreen) {
-                        document.msExitFullscreen();
-                    }
-                } else {
-                    if (video.requestFullscreen) {
-                        video.requestFullscreen();
-                    } else if (video.webkitRequestFullscreen) {
-                        video.webkitRequestFullscreen();
-                    } else if (video.mozRequestFullScreen) {
-                        video.mozRequestFullScreen();
-                    } else if (video.msRequestFullscreen) {
-                        video.msRequestFullscreen();
-                    } else if (video.webkitEnterFullscreen) {
-                        video.webkitEnterFullscreen();
-                    }
-                }
-            } else {
-                if (document.fullscreenElement) {
-                    if (document.exitFullscreen) {
-                        document.exitFullscreen();
-                    } else if (document.webkitExitFullscreen) {
-                        document.webkitExitFullscreen();
-                    } else if (document.mozCancelFullScreen) {
-                        document.mozCancelFullScreen();
-                    } else if (document.msExitFullscreen) {
-                        document.msExitFullscreen();
-                    }
-                } else {
-                    if (player.requestFullscreen) {
-                        player.requestFullscreen();
-                    } else if (player.webkitRequestFullscreen) {
-                        player.webkitRequestFullscreen();
-                    } else if (player.mozRequestFullScreen) {
-                        player.mozRequestFullScreen();
-                    } else if (player.msRequestFullscreen) {
-                        player.msRequestFullscreen();
-                    }
-                }
+            this.handleFullScreen( this.isIOS() ? video : player);
+        },
+
+        handleFullScreen(element) {
+            if (document.fullscreenElement) this.exitFullScreen();
+            else this.enterFullScreen(element);
+
+            if (this.isPaused) this.$refs.video.pause();
+            else this.$refs.video.play();
+        },
+
+        enterFullScreen(element) {
+            if (element.requestFullscreen) {
+                element.requestFullscreen();
+            } else if (element.webkitRequestFullscreen) {
+                element.webkitRequestFullscreen();
+            } else if (element.mozRequestFullScreen) {
+                element.mozRequestFullScreen();
+            } else if (element.msRequestFullscreen) {
+                element.msRequestFullscreen();
+            } else if (element.webkitEnterFullscreen) {
+                element.webkitEnterFullscreen(); // Для iPhone
+            }
+        },
+
+        exitFullScreen() {
+            if (document.exitFullscreen) {
+                document.exitFullscreen();
+            } else if (document.webkitExitFullscreen) {
+                document.webkitExitFullscreen();
+            } else if (document.mozCancelFullScreen) {
+                document.mozCancelFullScreen();
+            } else if (document.msExitFullscreen) {
+                document.msExitFullscreen();
             }
         },
 
@@ -141,8 +129,7 @@ export default {
             const formattedSeconds = String(seconds).padStart(2, '0');
 
             return `${formattedHours}${formattedMinutes}:${formattedSeconds}`;
-        }
-        ,
+        },
 
         initializeVideo() {
             this.video = {
