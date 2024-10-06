@@ -77,19 +77,57 @@ export default {
         isIOS() {
             return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
         },
+
         fullScreen() {
+            const player = this.$refs.player;
             const video = this.$refs.video;
 
             if (this.isIOS()) {
                 if (document.fullscreenElement) {
-                    document.exitFullscreen();
+                    if (document.exitFullscreen) {
+                        document.exitFullscreen();
+                    } else if (document.webkitExitFullscreen) {
+                        document.webkitExitFullscreen();
+                    } else if (document.mozCancelFullScreen) {
+                        document.mozCancelFullScreen();
+                    } else if (document.msExitFullscreen) {
+                        document.msExitFullscreen();
+                    }
                 } else {
-                    this.$refs.video.play();
-                    this.$refs.video.requestFullscreen();
+                    if (video.requestFullscreen) {
+                        video.requestFullscreen();
+                    } else if (video.webkitRequestFullscreen) {
+                        video.webkitRequestFullscreen();
+                    } else if (video.mozRequestFullScreen) {
+                        video.mozRequestFullScreen();
+                    } else if (video.msRequestFullscreen) {
+                        video.msRequestFullscreen();
+                    } else if (video.webkitEnterFullscreen) {
+                        video.webkitEnterFullscreen();
+                    }
                 }
             } else {
-                if (document.fullscreenElement) document.exitFullscreen();
-                else this.$refs.player.requestFullscreen();
+                if (document.fullscreenElement) {
+                    if (document.exitFullscreen) {
+                        document.exitFullscreen();
+                    } else if (document.webkitExitFullscreen) {
+                        document.webkitExitFullscreen();
+                    } else if (document.mozCancelFullScreen) {
+                        document.mozCancelFullScreen();
+                    } else if (document.msExitFullscreen) {
+                        document.msExitFullscreen();
+                    }
+                } else {
+                    if (player.requestFullscreen) {
+                        player.requestFullscreen();
+                    } else if (player.webkitRequestFullscreen) {
+                        player.webkitRequestFullscreen();
+                    } else if (player.mozRequestFullScreen) {
+                        player.mozRequestFullScreen();
+                    } else if (player.msRequestFullscreen) {
+                        player.msRequestFullscreen();
+                    }
+                }
             }
         },
 
