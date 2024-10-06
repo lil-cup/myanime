@@ -21,8 +21,8 @@
                     <div class="time">{{ formattedTime(currentTime) }} / {{ formattedTime(durationVideo) }}</div>
                 </div>
                 <div class="controls__buttons-play" @click="togglePlayPause">
-                    <img src="/images/player/play.svg" v-if="isPaused">
-                    <img src="/images/player/pause.svg" v-if="!isPaused">
+                    <img src="/images/player/play.svg" v-if="!isVideoPlaying">
+                    <img src="/images/player/pause.svg" v-if="isVideoPlaying">
                 </div>
                 <div class="controls__buttons-list">
                     <div class="control"><img src="/images/player/volume/volume-high.svg"></div>
@@ -48,12 +48,12 @@ export default {
         return {
             video: null,
             loadVideo: true,
-            isPaused: true,
             durationVideo: 0,
             currentTime: 0,
             bufferedWidth: 0,
             bufferedRanges: [],
             isBuffering: false,
+            isVideoPlaying: false,
         }
     },
 
@@ -66,14 +66,26 @@ export default {
             const openingStart = this.anime_data.opening.start;
             const openingEnd = this.anime_data.opening.stop;
             return this.currentTime >= openingStart && this.currentTime < openingEnd;
-        }
+        },
+
+        isPlaying() {
+            return this.$refs.video && !this.$refs.video.paused;
+        },
     },
 
     mounted() {
+        const video = this.$refs.video;
+
         this.initializeVideo();
+        video.addEventListener('play', this.handlePlayPauseEvent);
+        video.addEventListener('pause', this.handlePlayPauseEvent);
     },
 
     methods: {
+        handlePlayPauseEvent() {
+            this.isVideoPlaying = !this.$refs.video.paused;
+        },
+
         isIOS() {
             return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
         },
@@ -82,15 +94,12 @@ export default {
             const player = this.$refs.player;
             const video = this.$refs.video;
 
-            this.handleFullScreen( this.isIOS() ? video : player);
+            this.handleFullScreen(this.isIOS() ? video : player);
         },
 
         handleFullScreen(element) {
             if (document.fullscreenElement) this.exitFullScreen();
             else this.enterFullScreen(element);
-
-            if (this.isPaused) this.$refs.video.pause();
-            else this.$refs.video.play();
         },
 
         enterFullScreen(element) {
@@ -103,7 +112,7 @@ export default {
             } else if (element.msRequestFullscreen) {
                 element.msRequestFullscreen();
             } else if (element.webkitEnterFullscreen) {
-                element.webkitEnterFullscreen(); // Для iPhone
+                element.webkitEnterFullscreen();
             }
         },
 
@@ -151,14 +160,12 @@ export default {
             video.addEventListener('error', this.handleVideoError);
 
             this.uploadingVideo();
-        }
-        ,
+        },
 
         setLinePosition(data, refElement) {
             refElement.style.width = `${(data.stop - data.start) / this.durationVideo * 100}%`;
             refElement.style.left = `${data.start / this.durationVideo * 100}%`;
-        }
-        ,
+        },
 
         uploadingVideo() {
             if (Hls.isSupported()) {
@@ -171,36 +178,24 @@ export default {
                     this.loadVideo = false;
                 });
             }
-        }
-        ,
+        },
 
         togglePlayPause() {
             const video = this.$refs.video;
 
-            if (video.paused) {
-                video.play().then(() => {
-                    this.isPaused = false;
-                }).catch(error => {
-                    console.error("Ошибка при попытке воспроизвести видео:", error);
-                });
-            } else {
-                video.pause();
-                this.isPaused = true;
-            }
-        }
-        ,
+            if (video.paused) video.play()
+            else video.pause();
+        },
 
         skipOpening() {
             this.$refs.video.currentTime = this.anime_data.opening.stop;
             this.currentTime = this.anime_data.opening.stop;
-        }
-        ,
+        },
 
         updateTime() {
             const video = this.$refs.video;
             if (video && video.currentTime) this.currentTime = video.currentTime;
-        }
-        ,
+        },
 
         seekVideo(event) {
             const slider = event.currentTarget;
@@ -210,8 +205,7 @@ export default {
 
             this.$refs.video.currentTime = newTime;
             this.currentTime = newTime;
-        }
-        ,
+        },
 
         updateBuffered() {
             const video = this.$refs.video;
@@ -229,18 +223,15 @@ export default {
                     width
                 });
             }
-        }
-        ,
+        },
 
         handleBuffering() {
             this.isBuffering = true;
-        }
-        ,
+        },
 
         clearBuffering() {
             this.isBuffering = false;
-        }
-        ,
+        },
 
         handleVideoError() {
             this.isBuffering = false;
