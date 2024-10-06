@@ -74,9 +74,23 @@ export default {
     },
 
     methods: {
+        isIOS() {
+            return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+        },
         fullScreen() {
-            if (document.fullscreenElement) document.exitFullscreen();
-            else this.$refs.player.requestFullscreen();
+            const video = this.$refs.video;
+
+            if (this.isIOS()) {
+                if (document.fullscreenElement) {
+                    document.exitFullscreen();
+                } else {
+                    this.$refs.video.play();
+                    this.$refs.video.requestFullscreen();
+                }
+            } else {
+                if (document.fullscreenElement) document.exitFullscreen();
+                else this.$refs.player.requestFullscreen();
+            }
         },
 
         formattedTime(timeInSeconds) {
