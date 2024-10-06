@@ -7,7 +7,7 @@
                     <div class="rating" v-if="animeInfo.age_rating">{{ animeInfo.age_rating.label }}</div>
                     <img class="image" v-if="animeInfo" :src="ani_url + animeInfo.poster.src">
                     <router-link
-                        class="button"
+                        class="button primary"
                         :to="animeInfo ? { name: 'anime.episode', params: { id: animeInfo.episodes[0].id } } : { name: 'welcome.show' }">
                         <img src="/images/icons/play.svg">
                         первый эпизод

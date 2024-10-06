@@ -3,7 +3,6 @@
         <div class="container">
             <header-component></header-component>
             <div class="main__slogan">Добро пожаловать в <span class="logo"><span>My</span>anime</span>, где каждый найдет что-то для себя! От классики до последних новинок — мы собрали лучшие аниме-сериалы для вашего удовольствия. Приятного просмотра и ярких впечатлений!</div>
-
             <div class="swiper-anime">
                 <router-link :to="{ name: 'welcome.show'}" class="swiper-anime__title">
                     Новые эпизоды
@@ -11,7 +10,7 @@
                 <div class="swiper-container">
                     <div class="swiper-wrapper">
                         <div class="swiper-slide" v-for="anime in allAnime">
-                            <router-link :to="anime.alias ? { name: 'anime.episodes', params: { name: anime.alias } } : { name: 'welcome.show' }">
+                            <router-link class="slide" :to="anime.alias ? { name: 'anime.episodes', params: { name: anime.alias } } : { name: 'welcome.show' }">
                                 <div class="rating" v-if="anime.age_rating">{{ anime.age_rating.label }}</div>
                                 <div class="episode" v-if="!anime.loader">{{ anime.latest_episode.ordinal }} серия</div>
                                 <div class="content" v-if="!anime.loader">
@@ -23,7 +22,8 @@
                                             <span>{{ anime.type.description }}</span>
                                         </div>
                                         <router-link
-                                            class="content__data-button"
+                                            class="button primary"
+                                            style="width: fit-content"
                                             :to="{ name: 'anime.episode', params: { id: anime.latest_episode.id } }"
                                         >
                                             <img src="/images/icons/play.svg"> смотреть

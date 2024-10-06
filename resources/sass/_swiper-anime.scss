@@ -17,7 +17,7 @@
                 border-radius: 8px;
                 background: #141414f0;
 
-                a {
+                .slide {
                     display: flex;
                     gap: 20px;
                     align-items: center;
@@ -89,25 +89,6 @@
                                 span {
                                     color: #959595;
                                     font-size: 14px;
-                                }
-                            }
-
-                            &-button {
-                                width: fit-content;
-                                display: flex;
-                                align-items: center;
-                                gap: 8px;
-                                background: #212121ad;
-                                border-radius: 4px;
-                                padding: 10px 20px;
-                                transition: all .3s ease;
-
-                                &:hover {
-                                    background: #2d2c2cad;
-                                }
-
-                                img {
-                                    width: 12px;
                                 }
                             }
                         }
