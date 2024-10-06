@@ -35,6 +35,10 @@
     }
 
     .controls {
+        user-select: none;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
         display: flex;
         flex-direction: column;
         gap: 10px;
@@ -136,6 +140,7 @@
                 }
 
                 .control {
+                    position: relative;
                     cursor: pointer;
                     display: flex;
                     align-items: center;
@@ -149,10 +154,54 @@
 
                     &:hover {
                         background: #212121ad;
+
+                        &.volume {
+                            border-radius: 0 0 6px 6px;
+
+                            & > .volume-slider {
+                                height: 100px;
+
+                                & > span {
+                                    display: block;
+                                }
+                            }
+                        }
                     }
 
                     img {
                         height: 100%;
+                    }
+
+                    .volume-slider {
+                        height: 0;
+                        display: flex;
+                        justify-content: center;
+                        align-items: flex-end;
+                        z-index: 5;
+                        position: absolute;
+                        width: 100%;
+                        background: #212121ad;
+                        border-radius: 6px 6px 0 0;
+                        left: 0;
+                        top: 0;
+                        cursor: pointer;
+                        transition: all .3s ease;
+                        transform: translateY(-100%);
+
+                        span {
+                            display: none;
+                            position: absolute;
+                            top: 0;
+                            font-size: 10px;
+                            color: #35c9af;
+                            transform: translateY(-100%);
+                        }
+
+                        &__progress {
+                            border-radius: 6px 6px 0 0;
+                            background: #35c9af;
+                            width: 100%;
+                        }
                     }
                 }
             }

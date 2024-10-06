@@ -14,18 +14,27 @@
                     :key="index"
                     class="controls__line-buffer"
                     :style="{ left: buffer.start + '%', width: buffer.width + '%' }"
-                ></div>
+                >
+                </div>
             </div>
             <div class="controls__buttons">
                 <div class="controls__buttons-list">
                     <div class="time">{{ formattedTime(currentTime) }} / {{ formattedTime(durationVideo) }}</div>
                 </div>
                 <div class="controls__buttons-play" @click="togglePlayPause">
-                    <img src="/images/player/play.svg" v-if="!isVideoPlaying">
-                    <img src="/images/player/pause.svg" v-if="isVideoPlaying">
+                    <img src="/images/player/play.svg" v-show="!isVideoPlaying">
+                    <img src="/images/player/pause.svg" v-show="isVideoPlaying">
                 </div>
                 <div class="controls__buttons-list">
-                    <div class="control"><img src="/images/player/volume/volume-high.svg"></div>
+                    <div class="control volume">
+                        <img src="/images/player/volume/volume-mute.svg" v-show="volume === 0">
+                        <img src="/images/player/volume/volume-medium.svg" v-show="volume !== 0 && volume < 0.65">
+                        <img src="/images/player/volume/volume-high.svg" v-show="volume >= 0.65">
+                        <div class="volume-slider" @click="setVolume($event)">
+                            <span>{{ `${volume * 100}%` }}</span>
+                            <div class="volume-slider__progress" :style="{ height: volume * 100 + '%' }"></div>
+                        </div>
+                    </div>
                     <div class="control"><img src="/images/player/settings.svg"></div>
                     <div class="control" @click="fullScreen"><img src="/images/player/full-screen.svg"></div>
                 </div>
@@ -54,6 +63,7 @@ export default {
             bufferedRanges: [],
             isBuffering: false,
             isVideoPlaying: false,
+            volume: 1,
         }
     },
 
@@ -82,6 +92,15 @@ export default {
     },
 
     methods: {
+        setVolume(event) {
+            const slider = this.$el.querySelector('.volume-slider');
+            const rect = slider.getBoundingClientRect();
+            const offsetY = rect.bottom - event.clientY;
+
+            this.volume = Math.max(0, Math.min(1, offsetY / slider.offsetHeight));
+            this.$refs.video.volume = this.volume;
+        },
+
         handlePlayPauseEvent() {
             this.isVideoPlaying = !this.$refs.video.paused;
         },
@@ -152,6 +171,7 @@ export default {
             if (this.anime_data.ending && this.anime_data.ending.start) this.setLinePosition(this.anime_data.ending, this.$refs.ending);
 
             const video = this.$refs.video;
+            video.volume = this.volume;
             video.addEventListener('progress', this.updateBuffered);
             video.addEventListener('timeupdate', this.updateTime);
             video.addEventListener('waiting', this.handleBuffering);
