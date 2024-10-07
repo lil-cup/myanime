@@ -26,16 +26,49 @@
                     <img src="/images/player/pause.svg" v-show="isVideoPlaying">
                 </div>
                 <div class="controls__buttons-list">
-                    <div class="control volume">
+                    <div class="control volume" v-if="!isMobile">
                         <img src="/images/player/volume/volume-mute.svg" v-show="volume === 0">
                         <img src="/images/player/volume/volume-medium.svg" v-show="volume !== 0 && volume < 0.65">
                         <img src="/images/player/volume/volume-high.svg" v-show="volume >= 0.65">
                         <div class="volume-slider" @click="setVolume($event)">
-                            <span>{{ `${volume * 100}%` }}</span>
+                            <span>{{ `${Math.round(volume * 100)}%` }}</span>
                             <div class="volume-slider__progress" :style="{ height: volume * 100 + '%' }"></div>
                         </div>
                     </div>
-                    <div class="control"><img src="/images/player/settings.svg"></div>
+                    <div class="control">
+                        <img src="/images/player/settings.svg">
+                        <div class="block">
+                            <div class="settings">
+                                <div class="settings__content">
+                                    <span>Скорость</span>
+                                    <p>1x</p>
+                                </div>
+                                <div class="settings__content">
+                                    <span>Источник</span>
+                                    <p>
+                                        {{ `${source}p` }}
+                                    </p>
+                                    <div class="list" v-if="video">
+                                        <div
+                                            class="list__item"
+                                            v-for="video_source in Object.keys(video)"
+                                            :class="{active: source === video_source}"
+                                            @click="changeVideoSource(video_source)">
+                                            {{ `${video_source}p` }}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="settings__content">
+                                    <span>Пропускать опенинг</span>
+                                    <div class="settings__content-control"><i></i></div>
+                                </div>
+                                <div class="settings__content">
+                                    <span>Автовоспроизведение</span>
+                                    <div class="settings__content-control"><i></i></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     <div class="control" @click="fullScreen"><img src="/images/player/full-screen.svg"></div>
                 </div>
             </div>
@@ -64,6 +97,7 @@ export default {
             isBuffering: false,
             isVideoPlaying: false,
             volume: 1,
+            source: null,
         }
     },
 
@@ -80,6 +114,10 @@ export default {
 
         isPlaying() {
             return this.$refs.video && !this.$refs.video.paused;
+        },
+
+        isMobile() {
+            return /Mobi|Android|iPhone|iPad|iPod/.test(navigator.userAgent);
         },
     },
 
@@ -160,11 +198,15 @@ export default {
         },
 
         initializeVideo() {
-            this.video = {
-                hls_480: this.anime_data.hls_480 ?? null,
-                hls_720: this.anime_data.hls_720 ?? null,
-                hls_1080: this.anime_data.hls_1080 ?? null,
-            };
+            this.video = Object.keys(this.anime_data)
+                .filter(key => key.startsWith('hls_'))
+                .reduce((hls, key) => {
+                    const resolution = key.replace('hls_', '');
+                    hls[resolution] = this.anime_data[key];
+                    return hls;
+                }, {});
+
+            this.source = Object.keys(this.video)[0];
             this.durationVideo = this.anime_data.duration;
 
             if (this.anime_data.opening && this.anime_data.opening.start) this.setLinePosition(this.anime_data.opening, this.$refs.opening);
@@ -187,11 +229,25 @@ export default {
             refElement.style.left = `${data.start / this.durationVideo * 100}%`;
         },
 
+        changeVideoSource(video_source) {
+            if (this.video[video_source]) {
+                const currentTime = this.$refs.video.currentTime;
+                this.source = video_source;
+                this.uploadingVideo();
+
+                this.$nextTick(() => {
+                    this.$refs.video.currentTime = currentTime;
+                    if (this.isVideoPlaying) this.$refs.video.play();
+                });
+            }
+        },
+
         uploadingVideo() {
             if (Hls.isSupported()) {
                 const video = this.$refs.video;
                 const hls = new Hls();
-                hls.loadSource(this.video.hls_480);
+
+                hls.loadSource(this.video[this.source]);
                 hls.attachMedia(video);
 
                 hls.on(Hls.Events.MANIFEST_PARSED, () => {
