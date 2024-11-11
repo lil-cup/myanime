@@ -16,3 +16,6 @@ composer.lock
 /composer.lock
 /tmp
 /.cache
+
+#temporarily
+.github
