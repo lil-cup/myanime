@@ -6,8 +6,8 @@
         <div class="controls">
             <button class="primary" v-if="isOpening" @click="skipOpening">Пропустить опенинг</button>
             <div class="controls__line" @click="seekVideo($event)">
-                <div class="controls__line-smallLine" ref="opening"></div>
-                <div class="controls__line-smallLine" ref="ending"></div>
+                <div class="controls__line-smallLine" ref="opening" v-show="isShowMarkers"></div>
+                <div class="controls__line-smallLine" ref="ending" v-show="isShowMarkers"></div>
                 <div class="controls__line-progress" :style="{ width: progressWidth + '%' }"></div>
                 <div
                     v-for="(buffer, index) in bufferedRanges"
@@ -58,13 +58,18 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="settings__content">
+                                <div class="settings__content" @click="skipOp">
                                     <span>Пропускать опенинг</span>
-                                    <div class="settings__content-control"><i></i></div>
+                                    <div class="settings__content-control" ref="skip"><i ref="skip_circle"></i></div>
                                 </div>
                                 <div class="settings__content">
                                     <span>Автовоспроизведение</span>
                                     <div class="settings__content-control"><i></i></div>
+                                </div>
+                                <div class="settings__content" @click="showMarkers">
+                                    <span>Показать маркеры</span>
+                                    <div class="settings__content-control" ref="markers"><i ref="markers_circle"></i>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -88,6 +93,8 @@ export default {
 
     data() {
         return {
+            isSkipOpening: false,
+            isShowMarkers: false,
             video: null,
             loadVideo: true,
             durationVideo: 0,
@@ -101,14 +108,24 @@ export default {
         }
     },
 
+    watch: {
+        shouldSkipOpening(newVal) {
+            if (newVal) this.skipOpening();
+        }
+    },
+
     computed: {
+        shouldSkipOpening() {
+            return this.isOpening && this.isSkipOpening;
+        },
+
         progressWidth() {
             return (this.currentTime / this.durationVideo) * 100;
         },
 
         isOpening() {
-            const openingStart = this.anime_data.opening.start;
-            const openingEnd = this.anime_data.opening.stop;
+            const openingStart = this.anime_data.opening?.start;
+            const openingEnd = this.anime_data.opening?.stop;
             return this.currentTime >= openingStart && this.currentTime < openingEnd;
         },
 
@@ -130,6 +147,18 @@ export default {
     },
 
     methods: {
+        skipOp() {
+            this.isSkipOpening = !this.isSkipOpening;
+            this.$refs.skip.classList.toggle('active');
+            this.$refs.skip_circle.classList.toggle('active');
+        },
+
+        showMarkers() {
+            this.isShowMarkers = !this.isShowMarkers;
+            this.$refs.markers.classList.toggle('active');
+            this.$refs.markers_circle.classList.toggle('active');
+        },
+
         setVolume(event) {
             const slider = this.$el.querySelector('.volume-slider');
             const rect = slider.getBoundingClientRect();
@@ -202,7 +231,8 @@ export default {
                 .filter(key => key.startsWith('hls_'))
                 .reduce((hls, key) => {
                     const resolution = key.replace('hls_', '');
-                    hls[resolution] = this.anime_data[key];
+                    const value = this.anime_data[key];
+                    if (value) hls[resolution] = value;
                     return hls;
                 }, {});
 
