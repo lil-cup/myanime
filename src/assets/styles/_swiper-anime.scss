@@ -1,0 +1,98 @@
+.swiper-anime {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  flex-direction: column;
+  gap: 15px;
+
+  &__title {
+    font-size: 22px;
+  }
+
+  .swiper-slide {
+    overflow: hidden;
+    height: 280px;
+    border-radius: 8px;
+    background: #141414f0;
+
+    .slide {
+      display: flex;
+      gap: 20px;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      position: relative;
+      transition: all 0.3s ease;
+
+      &:hover {
+        background: #0000006b;
+      }
+
+      .poster {
+        width: 100%;
+        position: absolute;
+        top: -70px;
+        z-index: 0;
+      }
+
+      .rating {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        background: #c50f0fa3;
+        font-size: 12px;
+        font-weight: 800;
+        padding: 8px 15px;
+        border-radius: 5px;
+        z-index: 1;
+      }
+
+      .episode {
+        z-index: 1;
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        text-transform: uppercase;
+        background: #141414f0;
+        font-size: 14px;
+        font-weight: 500;
+        padding: 10px 20px;
+        border-radius: 5px;
+      }
+
+      .content {
+        z-index: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        padding: 20px;
+        width: 100%;
+        height: 60%;
+        margin-top: auto;
+        background: #060606f0;
+
+        .name {
+          font-size: 14px;
+          font-weight: 800;
+        }
+
+        &__data {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+
+          &-date {
+            display: flex;
+            gap: 10px;
+
+            span {
+              color: #959595;
+              font-size: 14px;
+            }
+          }
+        }
+      }
+    }
+  }
+}

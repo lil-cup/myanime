@@ -1,0 +1,33 @@
+input[type='button'],
+input[type='submit'],
+label.button,
+a.button,
+button {
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  width: fit-content;
+  color: #fff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+
+  img {
+    width: 12px;
+  }
+
+  &.primary {
+    background: #212121ad;
+    border-radius: 4px;
+    padding: 10px 20px;
+    transition: all 0.3s ease;
+
+    &:hover {
+      background: #2d2c2cad;
+    }
+  }
+
+  // &.secondary {
+  // }
+}

@@ -1,0 +1,35 @@
+@use '_variables.scss' as *;
+@use 'buttons';
+@use 'main';
+@use 'header';
+@use 'swiper-anime';
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  text-decoration: none;
+  border: none;
+  outline: none;
+  color: #eee;
+  font-family: $font-family-nunito-sans;
+}
+
+html {
+  min-height: 100vh;
+  scroll-behavior: smooth;
+}
+
+body {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: #0e0e0e;
+}
+
+.container {
+  margin: 0 auto;
+  width: 100%;
+  max-width: 1400px;
+  padding: 0 20px;
+}
