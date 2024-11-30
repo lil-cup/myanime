@@ -9,8 +9,8 @@
       </div>
       <div class="swiper-anime">
         <div class="swiper-slide" v-for="(anime, index) in allAnime" :key="index">
-          <a class="slide">
-            <div class="rating" v-if="anime.age_rating">{{ anime.age_rating.label }}</div>
+          <RouterLink :to="anime.alias ? { name: 'anime.episodes', params: { name: anime.alias } } : { name: 'welcome' }" class="slide"
+>            <div class="rating" v-if="anime.age_rating">{{ anime.age_rating.label }}</div>
             <div class="episode" v-if="!anime.loader">{{ anime.latest_episode.ordinal }} серия</div>
             <div class="content" v-if="!anime.loader">
               <div class="name">{{ anime.name.main }}</div>
@@ -39,7 +39,7 @@
             >
               <rect x="0" y="0" rx="0" ry="0" width="100%" height="100%" />
             </content-loader>
-          </a>
+          </RouterLink>
         </div>
       </div>
     </div>
@@ -74,7 +74,6 @@ export default {
       axios
         .get('https://anilibria.top/api/v1/anime/releases/latest?limit=3')
         .then((r) => {
-          console.log(r.data)
           this.allAnime = r.data.map(function (anime) {
             anime.loader = false
             return anime
