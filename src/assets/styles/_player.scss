@@ -63,7 +63,7 @@
 
     &__line {
       display: flex;
-      background: #0000004a;
+      background: #191919ba;
       height: 6px;
       width: 100%;
       cursor: pointer;
@@ -71,8 +71,23 @@
       border-radius: 5px;
       transition: all 0.3s ease;
 
+      .time_position {
+        display: none;
+        position: absolute;
+        bottom: 0;
+        font-size: 12px;
+        background: #35a1c9;
+        border-radius: 4px;
+        padding: 2px 10px;
+        transform: translate(-50%, -60%);
+      }
+
       &:hover {
         height: 8px;
+      }
+
+      &:hover > .time_position {
+        display: block;
       }
 
       &-smallLine {
@@ -265,34 +280,31 @@
                 padding-left: 10px;
 
                 .list {
-                    display: flex;
-                    flex-direction: column;
-                    gap: 4px;
-                    background: #212121ad;
-                    transform: translateX(100%);
-                    padding: 4px 6px;
-                    border-radius: 4px;
-                    transition: all 0.3s ease;
-    
-                    &__item {
-                      text-align: center;
-                      font-weight: 300;
-                      color: #bcbcbc;
-                      transition: all 0.4s ease;
-    
-                      &:hover {
-                        color: #35c9af;
-                      }
-    
-                      &.active {
-                        color: #35c9af;
-                      }
+                  display: flex;
+                  flex-direction: column;
+                  gap: 4px;
+                  background: #212121ad;
+                  transform: translateX(100%);
+                  padding: 4px 6px;
+                  border-radius: 4px;
+                  transition: all 0.3s ease;
+
+                  &__item {
+                    text-align: center;
+                    font-weight: 300;
+                    color: #bcbcbc;
+                    transition: all 0.4s ease;
+
+                    &:hover {
+                      color: #35c9af;
+                    }
+
+                    &.active {
+                      color: #35c9af;
                     }
                   }
-
+                }
               }
-
-              
 
               span {
                 font-weight: 600;

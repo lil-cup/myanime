@@ -5,7 +5,12 @@
     <video v-if="anime_data" ref="video" @click="togglePlayPause" playsinline></video>
     <div class="controls">
       <button class="primary" v-if="isOpening" @click="skipOpening">Пропустить опенинг</button>
-      <div class="controls__line" @click="seekVideo($event)">
+      <div
+        class="controls__line"
+        ref="controls__line"
+        @click="seekVideo($event)"
+        @mousemove="updateHoverTime($event)"
+      >
         <div class="controls__line-smallLine" ref="opening" v-show="isShowMarkers"></div>
         <div class="controls__line-smallLine" ref="ending" v-show="isShowMarkers"></div>
         <div class="controls__line-progress" :style="{ width: progressWidth + '%' }"></div>
@@ -15,6 +20,13 @@
           class="controls__line-buffer"
           :style="{ left: buffer.start + '%', width: buffer.width + '%' }"
         ></div>
+        <div
+          v-if="hoverTime !== null"
+          class="time_position"
+          :style="{ left: hoverTimePosition + 'px' }"
+        >
+          {{ formattedTime(hoverTime) }}
+        </div>
       </div>
       <div class="controls__buttons">
         <div class="controls__buttons-list">
@@ -70,9 +82,11 @@
                   <span>Пропускать опенинг</span>
                   <div class="settings__content-control" ref="skip"><i ref="skip_circle"></i></div>
                 </div>
-                <div class="settings__content">
+                <div class="settings__content" @click="autoVideo">
                   <span>Автовоспроизведение</span>
-                  <div class="settings__content-control"><i></i></div>
+                  <div class="settings__content-control" ref="autoplay">
+                    <i ref="autoplay_circle"></i>
+                  </div>
                 </div>
                 <div class="settings__content" @click="showMarkers">
                   <span>Показать маркеры</span>
@@ -122,6 +136,10 @@ export default {
       isVideoPlaying: false,
       volume: 1,
       source: null,
+      isAutoplay: false,
+      nextVideo: null,
+      hoverTime: null,
+      hoverTimePosition: 0,
     }
   },
 
@@ -156,19 +174,46 @@ export default {
   },
 
   mounted() {
+    this.nextVideo = this.anime_data.release.episodes[this.anime_data.ordinal + 1]
+      ? this.anime_data.release.episodes[this.anime_data.ordinal].id
+      : null
     const video = this.$refs.video
 
     this.initializeVideo()
     video.addEventListener('play', this.handlePlayPauseEvent)
     video.addEventListener('pause', this.handlePlayPauseEvent)
+    video.addEventListener('ended', this.handleVideoEnd)
     window.addEventListener('keydown', this.handleSpacePress)
   },
 
   methods: {
+    updateHoverTime(event) {
+      const progressBar = this.$refs.controls__line
+      const barRect = progressBar.getBoundingClientRect()
+      const barWidth = barRect.width
+      const offsetX = event.clientX - barRect.left
+      const clampedOffsetX = Math.min(Math.max(offsetX, 0), barWidth)
+      const time = (clampedOffsetX / barWidth) * this.durationVideo
+      this.hoverTime = time
+      this.hoverTimePosition = clampedOffsetX
+    },
+
+    handleVideoEnd() {
+      if (this.nextVideo && this.isAutoplay) {
+        this.$router.push({ name: 'anime.episode', params: { id: this.nextVideo } })
+      }
+    },
+
     skipOp() {
       this.isSkipOpening = !this.isSkipOpening
       this.$refs.skip.classList.toggle('active')
       this.$refs.skip_circle.classList.toggle('active')
+    },
+
+    autoVideo() {
+      this.isAutoplay = !this.isAutoplay
+      this.$refs.autoplay.classList.toggle('active')
+      this.$refs.autoplay_circle.classList.toggle('active')
     },
 
     showMarkers() {
@@ -255,7 +300,7 @@ export default {
           return hls
         }, {})
 
-      this.source = Object.keys(this.video)[0]
+      this.source = Object.keys(this.video)[Object.keys(this.video).length - 1]
       this.durationVideo = this.anime_data.duration
 
       if (this.anime_data.opening && this.anime_data.opening.start)
@@ -374,9 +419,44 @@ export default {
       alert('There was an error loading the video. Please check your connection and try again.')
     },
 
+    skipTime(seconds) {
+      const video = this.$refs.video
+      video.currentTime = Math.min(video.duration, Math.max(0, video.currentTime + seconds))
+    },
+
     handleSpacePress(e) {
       if (e.code === 'Space') {
         this.togglePlayPause()
+      }
+
+      if (!this.isVideoPlaying) return
+
+      if (e.code === 'ArrowUp') {
+        e.preventDefault()
+        const video = this.$refs.video
+
+        if (video.volume < 1) {
+          this.volume = Math.round((this.volume + 0.05) * 100) / 100
+          video.volume = this.volume
+        }
+      }
+
+      if (e.code === 'ArrowDown') {
+        e.preventDefault()
+        const video = this.$refs.video
+
+        if (this.volume > 0) {
+          this.volume = Math.round((this.volume - 0.05) * 100) / 100
+          video.volume = this.volume
+        }
+      }
+
+      if (e.code === 'ArrowRight') {
+        this.skipTime(5)
+      }
+
+      if (e.code === 'ArrowLeft') {
+        this.skipTime(-5)
       }
     },
   },

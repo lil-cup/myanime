@@ -84,8 +84,6 @@ export default {
       axios
       .get(`https://anilibria.top/api/v1/anime/releases/${this.nameAnime}`)
       .then((response) => {
-        console.log(response.data)
-
         this.animeInfo = response.data
       })
       .catch((e) => {

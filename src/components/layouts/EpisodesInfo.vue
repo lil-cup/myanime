@@ -7,7 +7,7 @@
     </div>
 
     <div :class="`episodes__episodes ${type}`">
-      <div :class="`episodes__episodes-episode ${type}`" v-for="(episode, index) in sortedEpisodes" :key="index">
+      <div :class="`episodes__episodes-episode ${type} ${index === active_episode ? 'active' : ''}`" v-for="(episode, index) in sortedEpisodes" :key="index">
         <RouterLink :to="{ name: 'anime.episode', params: { id: episode.id } }">
           <img v-if="episode.preview.src" :src="ani_url + episode.preview.src" :class="`bg ${type}`" />
           <img v-if="!episode.preview.src" src="/favicon.svg" :class="`bg-not ${type}`" />
@@ -35,6 +35,10 @@ export default {
     type: {
       required: true,
       type: String,
+    },
+
+    active_episode: {
+      default: false,
     }
   },
 
