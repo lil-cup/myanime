@@ -9,7 +9,7 @@
     <div :class="`episodes__episodes ${type}`">
       <div :class="`episodes__episodes-episode ${type} ${index === active_episode ? 'active' : ''}`" v-for="(episode, index) in sortedEpisodes" :key="index">
         <RouterLink :to="{ name: 'anime.episode', params: { id: episode.id } }">
-          <img v-if="episode.preview.src" :src="ani_url + episode.preview.src" :class="`bg ${type}`" />
+          <img v-if="episode.preview.src" :src="this.$ani_url_site + episode.preview.src" :class="`bg ${type}`" />
           <img v-if="!episode.preview.src" src="/favicon.svg" :class="`bg-not ${type}`" />
           <div class="content">
             <div class="content__title">
@@ -44,7 +44,6 @@ export default {
 
   data() {
     return {
-      ani_url: 'https://anilibria.top',
       isAscending: true,
     }
   },

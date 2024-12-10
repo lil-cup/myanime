@@ -27,7 +27,7 @@
             </div>
             <img
               class="poster"
-              :src="ani_url + anime.poster.src"
+              :src="this.$ani_url_site + anime.poster.src"
               v-if="!anime.loader && anime.poster.src"
             />
             <content-loader
@@ -48,9 +48,9 @@
 </template>
 
 <script>
-import axios from 'axios'
-import HeaderComponent from '../components/layouts/HeaderComponent.vue'
+import HeaderComponent from '@/components/layouts/HeaderComponent.vue'
 import { ContentLoader } from 'vue-content-loader'
+import {getLatestAnimeReleases} from "@/api/api_anilibria.js";
 
 export default {
   components: {
@@ -60,7 +60,6 @@ export default {
 
   data() {
     return {
-      ani_url: 'https://anilibria.top',
       allAnime: [{ loader: true }, { loader: true }, { loader: true }],
     }
   },
@@ -71,10 +70,9 @@ export default {
 
   methods: {
     getNewAnimeSeries() {
-      axios
-        .get('https://anilibria.top/api/v1/anime/releases/latest?limit=3')
+      getLatestAnimeReleases(3)
         .then((r) => {
-          this.allAnime = r.data.map(function (anime) {
+          this.allAnime = r.data.map((anime) => {
             anime.loader = false
             return anime
           })

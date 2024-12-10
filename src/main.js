@@ -7,5 +7,5 @@ import router from './router'
 const app = createApp(App)
 
 app.use(router)
-
+app.config.globalProperties.$ani_url_site = import.meta.env.VITE_ANILIBRIA_SITE_URL
 app.mount('#app')

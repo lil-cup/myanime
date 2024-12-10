@@ -12,7 +12,7 @@
           class="list__item"
           :key="index"
         >
-          <img :src="ani_url + anime.poster.src" class="list__item-poster" />
+          <img :src="this.$ani_url_site + anime.poster.src" class="list__item-poster" />
           <div>
             <h3>{{ anime.name.main }}</h3>
             <div class="list__item-description">{{ truncateDescription(anime.description) }}</div>
@@ -37,29 +37,22 @@
 </template>
 
 <script>
-import axios from 'axios'
+import {searchAnimeEpisodes} from "@/api/api_anilibria.js";
 
 export default {
   data() {
     return {
       search: '',
-      ani_url: 'https://anilibria.top',
-      list: null,
+      list: [],
     }
   },
 
   methods: {
     getNewAnimeSeries() {
       if (this.search.trim()) {
-        axios
-          .get('https://anilibria.top/api/v1/app/search/releases', {
-            params: {
-              query: this.search,
-            },
-          })
+        searchAnimeEpisodes(this.search)
           .then((r) => {
             this.list = r.data
-            console.log(r.data)
           })
           .catch((e) => {
             console.log(e)
