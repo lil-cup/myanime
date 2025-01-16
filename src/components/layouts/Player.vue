@@ -34,10 +34,15 @@
             {{ formattedTime(currentTime) }} / {{ formattedTime(durationVideo) }}
           </div>
         </div>
-        <div class="controls__buttons-play" @click="togglePlayPause">
-          <img src="/images/player/play.svg" v-show="!isVideoPlaying" />
-          <img src="/images/player/pause.svg" v-show="isVideoPlaying" />
+        <div class="controls__buttons-all">
+          <div class="controls__buttons-step"><img src="/images/player/player-back.svg" /></div>
+          <div class="controls__buttons-play" @click="togglePlayPause">
+            <img src="/images/player/play.svg" v-show="!isVideoPlaying" />
+            <img src="/images/player/pause.svg" v-show="isVideoPlaying" />
+          </div>
+          <div class="controls__buttons-step"><img src="/images/player/player-forward.svg" /></div>
         </div>
+
         <div class="controls__buttons-list">
           <div class="control volume" v-if="!isMobile">
             <img src="/images/player/volume/volume-mute.svg" v-show="volume === 0" />
@@ -254,27 +259,25 @@ export default {
 
     enterFullScreen(element) {
       if (element.requestFullscreen) {
-        element.requestFullscreen()
+        element.requestFullscreen();
       } else if (element.webkitRequestFullscreen) {
-        element.webkitRequestFullscreen()
-      } else if (element.mozRequestFullScreen) {
-        element.mozRequestFullScreen()
+        element.webkitRequestFullscreen();
       } else if (element.msRequestFullscreen) {
-        element.msRequestFullscreen()
-      } else if (element.webkitEnterFullscreen) {
-        element.webkitEnterFullscreen()
+        element.msRequestFullscreen();
+      } else {
+        console.warn('Fullscreen API не поддерживается этим браузером.');
       }
     },
 
     exitFullScreen() {
       if (document.exitFullscreen) {
-        document.exitFullscreen()
+        document.exitFullscreen();
       } else if (document.webkitExitFullscreen) {
-        document.webkitExitFullscreen()
-      } else if (document.mozCancelFullScreen) {
-        document.mozCancelFullScreen()
+        document.webkitExitFullscreen();
       } else if (document.msExitFullscreen) {
-        document.msExitFullscreen()
+        document.msExitFullscreen();
+      } else {
+        console.warn('Fullscreen API не поддерживается этим браузером.');
       }
     },
 
@@ -425,19 +428,20 @@ export default {
     },
 
     handleSpacePress(e) {
+      if (!document.fullscreenElement ) return
+
       if (e.code === 'Space') {
         this.togglePlayPause()
       }
-
-      if (!this.isVideoPlaying) return
 
       if (e.code === 'ArrowUp') {
         e.preventDefault()
         const video = this.$refs.video
 
         if (video.volume < 1) {
-          this.volume = Math.round((this.volume + 0.05) * 100) / 100
-          video.volume = this.volume
+          this.volume = Math.min(1, Math.round((this.volume + 0.05) * 100) / 100);
+          video.volume = this.volume;
+          console.log(this.volume);
         }
       }
 
@@ -446,8 +450,8 @@ export default {
         const video = this.$refs.video
 
         if (this.volume > 0) {
-          this.volume = Math.round((this.volume - 0.05) * 100) / 100
-          video.volume = this.volume
+          this.volume = Math.max(0, Math.round((this.volume - 0.05) * 100) / 100);
+          video.volume = this.volume;
         }
       }
 
